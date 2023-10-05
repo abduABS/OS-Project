@@ -20,6 +20,18 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_radioButton_clicked();
+
+    void on_radioButton_2_clicked();
+
+    void on_radioButton_3_clicked();
+
+    void on_textEdit_textChanged();
+
+    void on_textEdit_cursorPositionChanged();
+
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

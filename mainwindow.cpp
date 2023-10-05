@@ -4,8 +4,12 @@
 #include <QProcess>
 #include <stdio.h>
 #include <QVector>
+#include <string>
 #include <QString>
 //hello
+
+QString priority = 0;
+QString PID = 0;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -22,30 +26,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QProcess process;
 
-    // Set the command you want to run as an argument to start
-    QString command = "ls"; // Replace with your system command
-    QStringList arguments;  // Any additional arguments for the command
-    arguments << "-l";     // For example, to list files in long format
-
-    // Start the process with the command and arguments
-    process.start(command, arguments);
-
-    // Wait for the process to finish (optional)
-    process.waitForFinished();
-
-    // Read the output of the process
-    QString output = process.readAllStandardOutput();
-
-
-    QMessageBox::information(this, "Button Clicked", output);
 }
 
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    FILE *pin = popen("ps", "r");
+    QString command = "kill -9 "  + PID;
+    FILE *pin = popen(command.toStdString().c_str(), "r");
 
 
       QVector<QString> lines; // Vector to store each line
@@ -56,17 +44,63 @@ void MainWindow::on_pushButton_2_clicked()
           lines.push_back(buffer);
       }
 
-      QString s = "";
+//      QMessageBox msgBox;
+//      msgBox.setText();
+//      msgBox.exec();
+      pclose(pin);
 
-      QVector<QString>::iterator ptr;
-      for (ptr = lines.begin(); ptr < lines.end(); ptr++){
-          s += *ptr;
+}
+
+
+void MainWindow::on_radioButton_clicked()
+{
+    priority = "-15";
+}
+
+
+void MainWindow::on_radioButton_2_clicked()
+{
+    priority = "0";
+}
+
+
+void MainWindow::on_radioButton_3_clicked()
+{
+    priority = "10";
+}
+
+
+void MainWindow::on_textEdit_textChanged()
+{
+    PID = ui->textEdit->toPlainText();
+}
+
+
+void MainWindow::on_textEdit_cursorPositionChanged()
+{
+
+}
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    QString command = "renice "  + priority + " -p " + PID;
+    FILE *pin = popen(command.toStdString().c_str(), "r");
+
+
+      char buffer[1024];
+      while (fgets(buffer, sizeof(buffer), pin) != NULL) {
+          printf("%s", buffer);
+
+          QMessageBox msgBox;
+          msgBox.setText(buffer);
+          printf("%s",buffer);
+          msgBox.exec();
       }
 
       QMessageBox msgBox;
-      msgBox.setText(s);
+      msgBox.setText(buffer);
       msgBox.exec();
       pclose(pin);
-
 }
 
